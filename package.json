@@ -1,0 +1,17 @@
+{
+  "name": "appartman",
+  "version": "1.0.0",
+  "description": "Apartman yönetimi için tek kullanıcılı gelir/gider takip web uygulaması (Supabase)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  }
+}

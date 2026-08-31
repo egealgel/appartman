@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>appartman</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Giriş ekranı -->
+    <div id="login-overlay" class="login-overlay">
+      <form id="login-form" class="login-card" autocomplete="off">
+        <h1>appartman</h1>
+        <p class="muted">Devam etmek için giriş yapın</p>
+        <label
+          >Kullanıcı Adı
+          <input
+            type="text"
+            id="login-username"
+            autocomplete="username"
+            required
+          />
+        </label>
+        <label
+          >Şifre
+          <input
+            type="password"
+            id="login-password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+        <div id="login-error" class="error-text"></div>
+        <button type="submit" class="btn btn-primary btn-block">
+          Giriş Yap
+        </button>
+      </form>
+    </div>
+
+    <!-- Uygulama -->
+    <div id="app" class="app hidden">
+      <aside class="sidebar">
+        <div class="brand">appartman</div>
+        <nav>
+          <a href="#" data-view="dashboard" class="nav-item active"
+            ><span class="nav-ico">📊</span> Ana Panel</a
+          >
+          <a href="#" data-view="apartments" class="nav-item"
+            ><span class="nav-ico">🏠</span> Daireler</a
+          >
+          <a href="#" data-view="incomes" class="nav-item"
+            ><span class="nav-ico">💰</span> Gelirler</a
+          >
+          <a href="#" data-view="expenses" class="nav-item"
+            ><span class="nav-ico">🧾</span> Giderler</a
+          >
+          <a href="#" data-view="reports" class="nav-item"
+            ><span class="nav-ico">📈</span> Raporlar</a
+          >
+          <a href="#" data-view="settings" class="nav-item"
+            ><span class="nav-ico">⚙️</span> Ayarlar</a
+          >
+        </nav>
+        <div class="sidebar-footer">
+          <button id="logout-btn" class="btn btn-ghost btn-block">
+            Çıkış Yap
+          </button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <h2 id="view-title">Ana Panel</h2>
+          <div class="month-nav">
+            <button
+              type="button"
+              id="month-prev"
+              class="month-arrow"
+              title="Önceki ay"
+            >
+              ‹
+            </button>
+            <select
+              id="month-picker"
+              class="month-select"
+              title="Ay seçin"
+            ></select>
+            <button
+              type="button"
+              id="month-next"
+              class="month-arrow"
+              title="Sonraki ay"
+            >
+              ›
+            </button>
+          </div>
+        </header>
+
+        <!-- Ana Panel -->
+        <section id="view-dashboard" class="view active">
+          <div class="cards">
+            <div class="card income">
+              <div class="card-label">Toplam Gelir</div>
+              <div class="card-value" id="dash-income">₺0,00</div>
+            </div>
+            <div class="card expense">
+              <div class="card-label">Toplam Gider</div>
+              <div class="card-value" id="dash-expense">₺0,00</div>
+            </div>
+            <div class="card balance">
+              <div class="card-label">Kasa / Bakiye (devir dahil)</div>
+              <div class="card-value" id="dash-balance">₺0,00</div>
+            </div>
+            <div class="card info">
+              <div class="card-label">Aidat Ödemesi</div>
+              <div class="card-value" id="dash-paid">0/10</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Aidat Durumu</h3>
+            <div id="dash-apartments" class="chip-list"></div>
+          </div>
+
+          <div class="panel">
+            <h3>Son İşlemler</h3>
+            <div id="dash-recent" class="tx-list"></div>
+          </div>
+        </section>
+
+        <!-- Daireler -->
+        <section id="view-apartments" class="view">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Daireler</h3>
+              <button class="btn btn-primary" id="add-apartment-btn">
+                + Yeni Daire
+              </button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Daire Sahibi</th>
+                    <th>Telefon</th>
+                    <th>Bu Ay Aidat</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="apartments-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Gelirler -->
+        <section id="view-incomes" class="view">
+          <div class="two-col">
+            <div class="panel">
+              <h3>Yeni Gelir Ekle</h3>
+              <form id="income-form">
+                <label
+                  >Gelir Türü
+                  <select id="income-category">
+                    <option value="aidat">Aidat</option>
+                    <option value="ek">Ek Gelir (Bakım / Asansör vb.)</option>
+                  </select>
+                </label>
+                <div id="income-apartment-wrap" class="form-row">
+                  <label
+                    >Daire
+                    <select id="income-apartment"></select>
+                  </label>
+                </div>
+                <label
+                  >Tutar (₺)
+                  <input
+                    type="number"
+                    id="income-amount"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </label>
+                <label
+                  >Tarih
+                  <input type="date" id="income-date" required />
+                </label>
+                <label
+                  >Açıklama
+                  <input
+                    type="text"
+                    id="income-desc"
+                    placeholder="Örn: Nisan ayı aidatı"
+                  />
+                </label>
+                <button type="submit" class="btn btn-primary btn-block">
+                  Kaydet
+                </button>
+              </form>
+            </div>
+            <div class="panel">
+              <h3>Gelir Kayıtları</h3>
+              <div id="income-list" class="tx-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Giderler -->
+        <section id="view-expenses" class="view">
+          <div class="two-col">
+            <div class="panel">
+              <h3>Yeni Gider Ekle</h3>
+              <form id="expense-form">
+                <label
+                  >Gider Türü
+                  <select id="expense-category">
+                    <option value="temizlik">Temizlik (Havale)</option>
+                    <option value="elektrik">Elektrik (Otomatik Ödeme)</option>
+                    <option value="su">Su (Otomatik Ödeme)</option>
+                    <option value="diger">Diğer Gider</option>
+                  </select>
+                </label>
+                <label
+                  >Tutar (₺)
+                  <input
+                    type="number"
+                    id="expense-amount"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </label>
+                <label
+                  >Tarih
+                  <input type="date" id="expense-date" required />
+                </label>
+                <label
+                  >Açıklama
+                  <input
+                    type="text"
+                    id="expense-desc"
+                    placeholder="Örn: Mart elektrik faturası"
+                  />
+                </label>
+                <button type="submit" class="btn btn-primary btn-block">
+                  Kaydet
+                </button>
+              </form>
+            </div>
+            <div class="panel">
+              <h3>Gider Kayıtları</h3>
+              <div id="expense-list" class="tx-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Raporlar -->
+        <section id="view-reports" class="view">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Gelir / Gider Raporu</h3>
+              <button type="button" id="export-btn" class="btn btn-primary">
+                ⬇ Excel İndir
+              </button>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="panel">
+              <h3>Gelir Dağılımı</h3>
+              <div id="report-income-bars"></div>
+            </div>
+            <div class="panel">
+              <h3>Gider Dağılımı</h3>
+              <div id="report-expense-bars"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ayarlar -->
+        <section id="view-settings" class="view">
+          <div class="two-col">
+            <div class="panel">
+              <h3>Aidat ve Bakiye</h3>
+              <p class="muted small">
+                Aylık aidat tutarı "Aidat Al" butonunda kullanılır. Devir
+                bakiyesi, uygulamadan önce bankada kalan tutardır ve kasaya
+                eklenir.
+              </p>
+              <form id="settings-form">
+                <label
+                  >Aylık Aidat (₺)
+                  <input type="number" id="aidat-amount" step="0.01" min="0" />
+                </label>
+                <label
+                  >Devir Bakiyesi (₺)
+                  <input
+                    type="number"
+                    id="opening-balance"
+                    step="0.01"
+                    min="0"
+                  />
+                </label>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+              </form>
+            </div>
+            <div class="panel">
+              <h3>Şifre Değiştir</h3>
+              <form id="password-form">
+                <label
+                  >Mevcut Şifre
+                  <input
+                    type="password"
+                    id="current-password"
+                    required
+                    autocomplete="current-password"
+                  />
+                </label>
+                <label
+                  >Yeni Şifre
+                  <input
+                    type="password"
+                    id="new-password"
+                    required
+                    minlength="4"
+                    autocomplete="new-password"
+                  />
+                </label>
+                <button type="submit" class="btn btn-primary">
+                  Şifreyi Güncelle
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Daire düzenleme modalı -->
+    <div id="apartment-modal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="apartment-modal-title">Yeni Daire</h3>
+          <button class="modal-close" id="apartment-modal-close" type="button">
+            ×
+          </button>
+        </div>
+        <form id="apartment-form">
+          <input type="hidden" id="apartment-id" />
+          <label
+            >Daire No
+            <input type="number" id="apartment-no" min="1" required />
+          </label>
+          <label
+            >Daire Sahibi
+            <input type="text" id="apartment-owner" />
+          </label>
+          <label
+            >Telefon
+            <input type="text" id="apartment-phone" />
+          </label>
+          <label
+            >Not
+            <input type="text" id="apartment-note" />
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="apartment-is-manager" />
+            Yönetici dairesi (aidat ödemez)
+          </label>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost" id="apartment-cancel">
+              İptal
+            </button>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
